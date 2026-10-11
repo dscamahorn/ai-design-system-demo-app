@@ -22,7 +22,7 @@ curl -fsSL https://claude.ai/install.sh | bash
 
 echo "==> Wiring PATH and .env auto-load into shell startup files"
 LOCAL_BIN_LINE='export PATH="$HOME/.local/bin:$PATH"'
-ENV_MARKER="# design-system-demo: auto-load project .env"
+ENV_MARKER="# ai-design-system-demo-app: auto-load project .env"
 
 for shell_rc_file in $SHELL_RC_FILES; do
   touch "$shell_rc_file"

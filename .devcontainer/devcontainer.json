@@ -1,10 +1,10 @@
 {
-  // VS Code Dev Container for design-system-demo.
+  // VS Code Dev Container for ai-design-system-demo-app.
   // Open the Command Palette and choose "Dev Containers: Reopen in Container".
   // Everything runs in here: editing, terminal, git, builds, the dev server,
   // and Claude Code. Nothing needs to be installed on the Mac beyond Colima
   // and VS Code.
-  "name": "design-system-demo",
+  "name": "ai-design-system-demo-app",
 
   // Microsoft's Dev Container image for JavaScript/TypeScript work. It ships
   // Node 22, git, zsh, and a working global npm for the "node" user.

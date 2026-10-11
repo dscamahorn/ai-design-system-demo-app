@@ -1,6 +1,6 @@
 # Architecture
 
-This document shows how the pieces of design-system-demo fit together and
+This document shows how the pieces of ai-design-system-demo-app fit together and
 how a Figma design becomes React code. See `PRD.md` for what the project is
 for and `CLAUDE.md` for working rules.
 
@@ -140,7 +140,7 @@ flowchart LR
     node["Node 22 + npm"]
     git["git + GitHub CLI"]
     claudeCli["Claude Code CLI"]
-    workspace["/workspaces/design-system-demo"]
+    workspace["/workspaces/ai-design-system-demo-app"]
     claudeHome["/home/node/.claude"]
   end
   claudeDir["~/.claude (global CLAUDE.md, login)"]

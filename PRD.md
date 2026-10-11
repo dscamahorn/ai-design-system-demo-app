@@ -1,4 +1,4 @@
-# PRD: design-system-demo
+# PRD: ai-design-system-demo-app
 
 ## What this project is
 
