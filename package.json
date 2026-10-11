@@ -6,7 +6,7 @@
   "scripts": {
     "app:dev": "vite",
     "app:build": "tsc && vite build",
-    "app:lint": "eslint src/examples/SampleUI.tsx src/sample-ui-main.tsx --report-unused-disable-directives --max-warnings 0",
+    "app:lint": "eslint src/examples/SampleUI.tsx src/sample-ui-main.tsx src/figma/primitives/button/ButtonSuccess.figma.ts --report-unused-disable-directives --max-warnings 0",
     "app:lint:all": "eslint \"**/*.{ts,tsx}\" --report-unused-disable-directives --max-warnings 0",
     "app:preview": "vite preview",
     "storybook": "storybook dev -p 6006 --no-open",

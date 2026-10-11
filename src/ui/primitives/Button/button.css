@@ -108,6 +108,26 @@
   }
 }
 
+.button-variant-success-primary {
+  --button-background-color: var(--sds-color-background-positive-default);
+  --button-border-color: var(--sds-color-border-positive-secondary);
+  --button-color: var(--sds-color-text-positive-on-positive);
+  &[data-hovered]:not([data-disabled]) {
+    --button-background-color: var(--sds-color-background-positive-hover);
+    --button-border-color: var(--sds-color-border-positive-default);
+  }
+}
+.button-variant-success-subtle {
+  --button-background-color: transparent;
+  --button-border-color: transparent;
+  --button-color: var(--sds-color-text-positive-default);
+  &[data-hovered]:not([data-disabled]) {
+    --button-background-color: var(
+      --sds-color-background-positive-tertiary-hover
+    );
+  }
+}
+
 .button[data-disabled] {
   cursor: default;
   pointer-events: none;
