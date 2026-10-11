@@ -49,7 +49,7 @@ export const StoryHello: StoryObj<{}> = {
 
             <TextLinkList density="tight">
               <TextListItem>
-                <TextLink href="https://github.com/dscamahorn/design-system-demo">
+                <TextLink href="https://github.com/dscamahorn/ai-design-system-demo-app">
                   GitHub Repo
                 </TextLink>
               </TextListItem>

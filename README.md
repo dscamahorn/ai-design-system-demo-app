@@ -1,4 +1,4 @@
-# design-system-demo
+# ai-design-system-demo-app
 
 SDS (Simple Design System) is a React + TypeScript component library with deep Figma Code Connect integration: both a design system and a demo of Figma MCP-driven, design-to-code workflows.
 
@@ -24,8 +24,8 @@ The recommended path is VS Code + Dev Containers, which matches how this repo is
    - A Docker runtime. This repo is developed against [Colima](https://github.com/abiosoft/colima), but Docker Desktop or any other Docker context works too.
 2. **Clone the repo and open it in VS Code**
    ```bash
-   git clone https://github.com/dscamahorn/design-system-demo.git
-   code design-system-demo
+   git clone git@github.com:dscamahorn/ai-design-system-demo-app.git
+   code ai-design-system-demo-app
    ```
 3. **Reopen in container**: VS Code should prompt automatically; otherwise open the Command Palette (`Cmd/Ctrl+Shift+P`) → **Dev Containers: Reopen in Container**.
    - This uses Microsoft's `javascript-node:22-bookworm` Dev Container image (`.devcontainer/devcontainer.json`), adds the GitHub CLI feature, bind-mounts your `~/.claude` folder so Claude Code sees your global rules and login, and forwards the ports used by the app, Storybook, and the Figma console MCP bridge (8000, 6006, 9223–9232).
@@ -37,8 +37,8 @@ The recommended path is VS Code + Dev Containers, which matches how this repo is
 
 1. **Install Node 22** and clone the repo:
    ```bash
-   git clone https://github.com/dscamahorn/design-system-demo.git
-   cd design-system-demo
+   git clone git@github.com:dscamahorn/ai-design-system-demo-app.git
+   cd ai-design-system-demo-app
    ```
 2. **Install dependencies**
    ```bash
@@ -60,7 +60,7 @@ Needed for both the Figma sync scripts below and the `figma-console` MCP server.
 
 1. In Figma, go to your **account settings** (click your avatar, top left) → **Security** tab.
 2. Scroll to **Personal access tokens** → **Generate new token**.
-3. Give it a name (e.g. `design-system-demo`) and grant scopes for **Code Connect**, **Variables** (read), and **Dev resources** (read/write). These are what `scripts/tokens`, `scripts/icons`, and `scripts/dev-resources` need.
+3. Give it a name (e.g. `ai-design-system-demo-app`) and grant scopes for **Code Connect**, **Variables** (read), and **Dev resources** (read/write). These are what `scripts/tokens`, `scripts/icons`, and `scripts/dev-resources` need.
 4. Copy the token immediately. Figma only shows it once.
 5. Copy `.env-rename` to `.env` and paste it in as `FIGMA_ACCESS_TOKEN`, along with the SDS file key (`FIGMA_FILE_KEY`, the `r2laq9NyigGR0KZpc05sQm` from the `design-system-demo-sds` URL above).
    - In the Dev Container, `.env` is auto-loaded into the shell on startup (see `.devcontainer/post-create.sh`) so it's available for `.mcp.json`'s `${FIGMA_ACCESS_TOKEN}` variable expansion.
