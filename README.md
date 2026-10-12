@@ -29,7 +29,7 @@ The recommended path is VS Code + Dev Containers, which matches how this repo is
    ```
 3. **Reopen in container**: VS Code should prompt automatically; otherwise open the Command Palette (`Cmd/Ctrl+Shift+P`) → **Dev Containers: Reopen in Container**.
    - This uses Microsoft's `javascript-node:22-bookworm` Dev Container image (`.devcontainer/devcontainer.json`), adds the GitHub CLI and Claude Code features, bind-mounts the needed pieces of your `~/.claude` folder so Claude Code sees your global rules and login, and forwards the ports used by the app, Storybook, and the Figma console MCP bridge (8000, 6006, 9223–9232).
-   - `.devcontainer/post-create.sh` then runs `npm install` and sets bash and zsh up to load `.env`.
+   - `.devcontainer/post-create.sh` then runs `npm install`.
    - It also installs the Claude Code, ESLint, Prettier, and [GitHub Pull Requests](https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github) extensions inside the container, with format-on-save turned on.
 4. Once the container is up, open a terminal in VS Code and continue with the "Run it" commands below. Dependencies are already installed.
 
@@ -63,7 +63,7 @@ Needed for both the Figma sync scripts below and the `figma-console` MCP server.
 3. Give it a name (e.g. `ai-design-system-demo-app`) and grant scopes for **Code Connect**, **Variables** (read), and **Dev resources** (read/write). These are what `scripts/tokens`, `scripts/icons`, and `scripts/dev-resources` need.
 4. Copy the token immediately. Figma only shows it once.
 5. Copy `.env-rename` to `.env` and paste it in as `FIGMA_ACCESS_TOKEN`, along with the SDS file key (`FIGMA_FILE_KEY`, the `r2laq9NyigGR0KZpc05sQm` from the `design-system-demo-sds` URL above).
-   - In the Dev Container, `.env` is auto-loaded into the shell on startup (see `.devcontainer/post-create.sh`) so it's available for `.mcp.json`'s `${FIGMA_ACCESS_TOKEN}` variable expansion.
+   - `.env` is not loaded into the shell. The `figma-console` MCP server is started through `scripts/start-figma-console-mcp.sh`, which reads the token from `.env` and passes it to that server only; the sync scripts read `.env` themselves through `node --env-file`.
 
 ### Optional: Figma sync scripts
 
@@ -77,7 +77,7 @@ npm run script:dev-resources
 
 ### Optional: Figma MCP tools
 
-If you're using Claude Code or another MCP-aware tool to work on this repo with live Figma access, `.mcp.json` in the repo root already configures the `figma` (remote) and `figma-console` (local) MCP servers. The latter needs the `FIGMA_ACCESS_TOKEN` from above (it's referenced as `${FIGMA_ACCESS_TOKEN}`, not hardcoded, so the file is safe to check in and is tracked in git).
+If you're using Claude Code or another MCP-aware tool to work on this repo with live Figma access, `.mcp.json` in the repo root already configures the `figma` (remote) and `figma-console` (local) MCP servers. The latter needs the `FIGMA_ACCESS_TOKEN` from above; `.mcp.json` runs `scripts/start-figma-console-mcp.sh`, which reads the token from `.env`, so `.mcp.json` holds no secret and is tracked in git.
 
 **Current workflow**: day-to-day, changes are communicated between design and code using the remote `figma` MCP server together with the local `figma-console` MCP server, with the **Figma Desktop Bridge plugin running in both `design-system-demo-sds` and `design-system-demo-website`**. This gives an MCP-aware tool live read/write access to both files (inspecting nodes, variables, and components; pushing edits back) without needing either file to be exported or re-fetched. The Code Connect mapping in `figma.config.json` (see above) is configured and available as an alternative/complementary path (pointing Figma Dev Mode directly at the real React source per component), but it hasn't been published or relied on yet; everything so far has gone through the Desktop Bridge + MCP servers instead. See `CLAUDE.md` for the fuller workflow notes.
 
@@ -121,4 +121,4 @@ Quick reference. See "Getting started" above for setup steps.
 - **Formatting and linting**: Prettier (`.prettierrc`, with the organize-imports plugin) and ESLint (`eslint.config.js`, flat config), both as dev dependencies. Run `npm run app:lint` to lint; the editor formats on save.
 - **GitHub**: repo is connected via `gh`. See remote with `git remote -v`.
 - **Framework/package manager**: npm + Vite + React + TypeScript (see `package.json`).
-- **Figma MCP**: configured in `.mcp.json` (tracked in git; no secrets in it, just `${FIGMA_ACCESS_TOKEN}` variable expansion): remote `figma` server plus local `figma-console` server. See `CLAUDE.md` for the workflow.
+- **Figma MCP**: configured in `.mcp.json` (tracked in git; no secrets in it, the token is read from `.env` by `scripts/start-figma-console-mcp.sh`): remote `figma` server plus local `figma-console` server. See `CLAUDE.md` for the workflow.

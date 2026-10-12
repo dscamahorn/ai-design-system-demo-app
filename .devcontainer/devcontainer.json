@@ -107,9 +107,8 @@
 
   // First-time setup when the container is built. Run `claude login`
   // afterward if the shared login file is empty.
-  // post-create.sh installs the npm dependencies and sets the shell up to
-  // load .env. The second command installs the timelapse skill as a uv
-  // tool, so `timelapse capture` works from any terminal in the container.
+  // post-create.sh installs the npm dependencies. The second command
+  // installs the timelapse skill as a uv tool, so `timelapse capture` works from any terminal in the container.
   // It runs here and not in the Dockerfile because the skills mount does
   // not exist yet at image build time. --editable means the tool's venv (in
   // the container's home folder) points back at the read-only skills mount

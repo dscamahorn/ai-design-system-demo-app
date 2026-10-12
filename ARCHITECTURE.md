@@ -155,5 +155,6 @@ bind-mounted, so edits made from the Mac or from inside the container are the
 same files. The needed pieces of the Mac's `~/.claude` folder are mounted too, so
 Claude Code inside the container reads the global rules and keeps its login
 across rebuilds. Claude Code comes from its dev container feature.
-`.devcontainer/post-create.sh` installs dependencies and makes bash and zsh
-load `.env` so the Figma token reaches `.mcp.json`.
+`.devcontainer/post-create.sh` installs dependencies. The Figma token is not
+loaded into the shell: `.mcp.json` starts the figma-console server through
+`scripts/start-figma-console-mcp.sh`, which reads it from `.env`.
