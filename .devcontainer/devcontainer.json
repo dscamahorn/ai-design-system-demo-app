@@ -25,7 +25,7 @@
 
   // Runs on the Mac just before the container is created, so the login file
   // exists before it is mounted ("{}" means not logged in).
-  "initializeCommand": "mkdir -p ~/.claude/skills ~/.claude/web-baseline && ([ -f ~/.claude/.credentials.json ] || echo '{}' > ~/.claude/.credentials.json)",
+  "initializeCommand": "mkdir -p ~/.claude/skills ~/.claude/web-baseline ~/.claude/memory && ([ -f ~/.claude/.credentials.json ] || echo '{}' > ~/.claude/.credentials.json)",
 
   // Claude Code reads the global rules from ~/.claude. Only the pieces the
   // container needs are shared in, each as its own mount; transcripts and
@@ -35,7 +35,8 @@
     "source=${localEnv:HOME}/.claude/settings.json,target=/home/node/.claude/settings.json,type=bind",
     "source=${localEnv:HOME}/.claude/.credentials.json,target=/home/node/.claude/.credentials.json,type=bind",
     "source=${localEnv:HOME}/.claude/skills,target=/home/node/.claude/skills,type=bind",
-    "source=${localEnv:HOME}/.claude/web-baseline,target=/home/node/.claude/web-baseline,type=bind,readonly"
+    "source=${localEnv:HOME}/.claude/web-baseline,target=/home/node/.claude/web-baseline,type=bind,readonly",
+    "source=${localEnv:HOME}/.claude/memory,target=/home/node/.claude/memory,type=bind"
   ],
 
   // The chown first: Docker creates the mount folders as root, and Claude
