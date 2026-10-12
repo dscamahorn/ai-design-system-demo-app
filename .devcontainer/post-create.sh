@@ -1,9 +1,10 @@
 #!/bin/bash
 # One-time setup that runs after the dev container is created.
-# It does three things:
+# It does two things:
 #   1. installs the project's npm dependencies
-#   2. installs the Claude Code CLI for the container user
-#   3. makes the shell load the project's .env file (Figma token) on startup
+#   2. makes the shell load the project's .env file (Figma token) on startup
+# Claude Code itself comes from the Claude Code feature in devcontainer.json,
+# so it is not installed here.
 set -e
 
 PROJECT_DIR="$PWD"
@@ -15,22 +16,11 @@ SHELL_RC_FILES="$HOME/.bashrc $HOME/.zshrc"
 echo "==> Installing npm dependencies"
 npm install
 
-echo "==> Installing Claude Code CLI"
-# The official installer puts the binary in ~/.local/bin, so it does not
-# need root access or a global npm install.
-curl -fsSL https://claude.ai/install.sh | bash
-
-echo "==> Wiring PATH and .env auto-load into shell startup files"
-LOCAL_BIN_LINE='export PATH="$HOME/.local/bin:$PATH"'
+echo "==> Wiring .env auto-load into shell startup files"
 ENV_MARKER="# ai-design-system-demo-app: auto-load project .env"
 
 for shell_rc_file in $SHELL_RC_FILES; do
   touch "$shell_rc_file"
-
-  # Make sure ~/.local/bin is on PATH for every new shell.
-  if ! grep -qF "$LOCAL_BIN_LINE" "$shell_rc_file"; then
-    echo "$LOCAL_BIN_LINE" >> "$shell_rc_file"
-  fi
 
   # .mcp.json refers to ${FIGMA_ACCESS_TOKEN}, which Claude Code expands from
   # the shell environment. Loading .env here means the token is available

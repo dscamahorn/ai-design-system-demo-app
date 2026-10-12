@@ -28,8 +28,8 @@ The recommended path is VS Code + Dev Containers, which matches how this repo is
    code ai-design-system-demo-app
    ```
 3. **Reopen in container**: VS Code should prompt automatically; otherwise open the Command Palette (`Cmd/Ctrl+Shift+P`) → **Dev Containers: Reopen in Container**.
-   - This uses Microsoft's `javascript-node:22-bookworm` Dev Container image (`.devcontainer/devcontainer.json`), adds the GitHub CLI feature, bind-mounts your `~/.claude` folder so Claude Code sees your global rules and login, and forwards the ports used by the app, Storybook, and the Figma console MCP bridge (8000, 6006, 9223–9232).
-   - `.devcontainer/post-create.sh` then runs `npm install`, installs the Claude Code CLI, and sets bash and zsh up to load `.env`.
+   - This uses Microsoft's `javascript-node:22-bookworm` Dev Container image (`.devcontainer/devcontainer.json`), adds the GitHub CLI and Claude Code features, bind-mounts the needed pieces of your `~/.claude` folder so Claude Code sees your global rules and login, and forwards the ports used by the app, Storybook, and the Figma console MCP bridge (8000, 6006, 9223–9232).
+   - `.devcontainer/post-create.sh` then runs `npm install` and sets bash and zsh up to load `.env`.
    - It also installs the Claude Code, ESLint, Prettier, and [GitHub Pull Requests](https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github) extensions inside the container, with format-on-save turned on.
 4. Once the container is up, open a terminal in VS Code and continue with the "Run it" commands below. Dependencies are already installed.
 
