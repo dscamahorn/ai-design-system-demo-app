@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { IconActivity, IconArrowLeft } from "icons";
-import { Button, ButtonDanger, ButtonGroup } from "primitives";
+import { Button, ButtonDanger, ButtonGroup, ButtonSuccess } from "primitives";
 
 const meta: Meta<typeof Button> = {
   component: Button,
@@ -60,6 +60,33 @@ export const StoryButtonDanger: StoryObj<typeof ButtonDanger> = {
       {children}
       <IconActivity />
     </ButtonDanger>
+  ),
+};
+
+export const StoryButtonSuccess: StoryObj<typeof ButtonSuccess> = {
+  name: "Button Success",
+  args: {
+    children: "Hello world",
+    variant: "success-primary",
+  },
+  argTypes: {
+    children: {
+      control: { type: "text" },
+    },
+    size: {
+      control: { type: "select" },
+    },
+    variant: {
+      control: { type: "select" },
+      options: ["success-primary", "success-subtle"],
+    },
+  },
+  render: ({ children, ...props }) => (
+    <ButtonSuccess {...props}>
+      <IconArrowLeft />
+      {children}
+      <IconActivity />
+    </ButtonSuccess>
   ),
 };
 

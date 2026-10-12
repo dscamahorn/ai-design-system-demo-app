@@ -7,7 +7,7 @@ import "./button.css";
 export type ButtonProps = Omit<ButtonBaseProps, "variant"> & {
   variant?: Exclude<
     ButtonBaseProps["variant"],
-    "danger-primary" | "danger-subtle"
+    "danger-primary" | "danger-subtle" | "success-primary" | "success-subtle"
   >;
 };
 export const Button = React.forwardRef(function Button(
@@ -49,7 +49,7 @@ export const Button = React.forwardRef(function Button(
 export type ButtonDangerProps = Omit<ButtonBaseProps, "variant"> & {
   variant?: Exclude<
     ButtonBaseProps["variant"],
-    "primary" | "subtle" | "neutral"
+    "primary" | "subtle" | "neutral" | "success-primary" | "success-subtle"
   >;
 };
 /**
@@ -96,6 +96,56 @@ export const ButtonDanger = React.forwardRef(function Button(
   );
 });
 
+export type ButtonSuccessProps = Omit<ButtonBaseProps, "variant"> & {
+  variant?: Exclude<
+    ButtonBaseProps["variant"],
+    "primary" | "subtle" | "neutral" | "danger-primary" | "danger-subtle"
+  >;
+};
+/**
+ * Only used for positive, confirming actions
+ */
+export const ButtonSuccess = React.forwardRef(function Button(
+  {
+    className,
+    size = "medium",
+    variant = "success-primary",
+    ...props
+  }: ButtonSuccessProps,
+  ref: React.ForwardedRef<HTMLElement>,
+) {
+  const classNames = clsx(
+    className,
+    "button",
+    `button-size-${size}`,
+    `button-variant-${variant}`,
+  );
+
+  if (isAnchorProps(props)) {
+    const { style, ...anchorProps } = props;
+    return (
+      <RACLink
+        {...anchorProps}
+        className={classNames}
+        ref={ref as React.ForwardedRef<HTMLAnchorElement>}
+      >
+        {props.children}
+      </RACLink>
+    );
+  }
+
+  const { style, ...buttonProps } = props;
+  return (
+    <RACButton
+      {...(buttonProps as ComponentPropsWithoutRef<typeof RACButton>)}
+      className={classNames}
+      ref={ref as React.ForwardedRef<HTMLButtonElement>}
+    >
+      {props.children}
+    </RACButton>
+  );
+});
+
 type ButtonBaseProps = {
   type?: ComponentPropsWithoutRef<"button">["type"];
   size?: "small" | "medium";
@@ -104,12 +154,14 @@ type ButtonBaseProps = {
     | "neutral"
     | "subtle"
     | "danger-primary"
-    | "danger-subtle";
+    | "danger-subtle"
+    | "success-primary"
+    | "success-subtle";
 } & AnchorOrButtonProps;
 
 function isAnchorProps(
-  props: ButtonBaseProps | ButtonDangerProps,
-): props is (ButtonBaseProps | ButtonDangerProps) &
+  props: ButtonBaseProps | ButtonDangerProps | ButtonSuccessProps,
+): props is (ButtonBaseProps | ButtonDangerProps | ButtonSuccessProps) &
   ComponentPropsWithoutRef<typeof RACLink> {
   return "href" in props;
 }
