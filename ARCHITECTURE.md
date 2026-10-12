@@ -152,7 +152,9 @@ flowchart LR
 
 Everything that executes runs inside the container. The project folder is
 bind-mounted, so edits made from the Mac or from inside the container are the
-same files. The Mac's `~/.claude` folder is mounted too, so Claude Code inside
-the container reads the global rules and keeps its login across rebuilds.
-`.devcontainer/post-create.sh` installs dependencies, installs Claude Code,
-and makes bash and zsh load `.env` so the Figma token reaches `.mcp.json`.
+same files. The needed pieces of the Mac's `~/.claude` folder are mounted too, so
+Claude Code inside the container reads the global rules and keeps its login
+across rebuilds. Claude Code comes from its dev container feature.
+`.devcontainer/post-create.sh` installs dependencies. The Figma token is not
+loaded into the shell: `.mcp.json` starts the figma-console server through
+`scripts/start-figma-console-mcp.sh`, which reads it from `.env`.

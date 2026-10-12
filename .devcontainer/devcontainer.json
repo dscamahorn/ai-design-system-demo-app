@@ -2,78 +2,149 @@
   // VS Code Dev Container for ai-design-system-demo-app.
   // Open the Command Palette and choose "Dev Containers: Reopen in Container".
   // Everything runs in here: editing, terminal, git, builds, the dev server,
-  // and Claude Code. Nothing needs to be installed on the Mac beyond Colima
-  // and VS Code.
+  // Storybook, and Claude Code. Nothing needs to be installed on the Mac
+  // beyond Colima and VS Code. See the "Dev Containers" section of
+  // ~/.claude/CLAUDE.md (and the stack-devcontainer skill) for why each
+  // piece is here. The image's user is "node".
   "name": "ai-design-system-demo-app",
 
-  // Microsoft's Dev Container image for JavaScript/TypeScript work. It ships
-  // Node 22, git, zsh, and a working global npm for the "node" user.
   // The image is described in Dockerfile next to this file.
   "build": { "dockerfile": "Dockerfile" },
 
   "features": {
-    "ghcr.io/devcontainers/features/github-cli:1": {}
+    // The GitHub CLI (gh) for management actions such as opening a pull
+    // request. Git itself goes over SSH and needs no gh login.
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    // Anthropic's feature that installs the Claude Code command-line tool.
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
   },
 
-  // Who git says made each commit. The email is GitHub's private no-reply
-  // address, so no real address lands in the repo's history.
-  "containerEnv": {
-    "GIT_AUTHOR_NAME": "Doug Scamahorn",
-    "GIT_AUTHOR_EMAIL": "6138631+dscamahorn@users.noreply.github.com",
-    "GIT_COMMITTER_NAME": "Doug Scamahorn",
-    "GIT_COMMITTER_EMAIL": "6138631+dscamahorn@users.noreply.github.com"
-  },
-
-  // Runs on the Mac just before the container is created, so the login file
-  // exists before it is mounted ("{}" means not logged in).
-  "initializeCommand": "mkdir -p ~/.claude/shared ~/.claude/skills ~/.claude/web-baseline ~/.claude/memory && ([ -f ~/.claude/.credentials.json ] || echo '{}' > ~/.claude/.credentials.json)",
-
-  // Claude Code reads the global rules from ~/.claude. Only the pieces the
-  // container needs are shared in, each as its own mount; transcripts and
-  // caches stay on the Mac. The Node image's user is "node".
-  "mounts": [
-    "source=${localEnv:HOME}/.claude/shared,target=/home/node/.claude/shared,type=bind",
-    "source=${localEnv:HOME}/.claude/.credentials.json,target=/home/node/.claude/.credentials.json,type=bind",
-    "source=${localEnv:HOME}/.claude/skills,target=/home/node/.claude/skills,type=bind",
-    "source=${localEnv:HOME}/.claude/web-baseline,target=/home/node/.claude/web-baseline,type=bind,readonly",
-    "source=${localEnv:HOME}/.claude/memory,target=/home/node/.claude/memory,type=bind"
-  ],
-
-  // The chown first: Docker creates the mount folders as root, and Claude
-  // Code must be able to write its session files in ~/.claude. Then the
-  // script installs npm dependencies and the Claude Code CLI and wires up
-  // .env loading for the shell.
-  "postCreateCommand": "bash .devcontainer/post-create.sh",
-
-  // 8000 is the Vite dev server, 6006 is Storybook, and 9223-9232 is the
-  // port range the Figma Desktop Bridge plugin uses to reach the local
-  // figma-console MCP server running in this container.
+  // Ports to reach from the Mac's browser. 8000 is the Vite dev server,
+  // 6006 is Storybook, and 9223-9232 is the port range the Figma Desktop
+  // Bridge plugin uses to reach the local figma-console MCP server running
+  // in this container.
   "forwardPorts": [
     8000, 6006, 9223, 9224, 9225, 9226, 9227, 9228, 9229, 9230, 9231, 9232
   ],
   "portsAttributes": {
-    "8000": { "label": "Vite dev server" },
-    "6006": { "label": "Storybook" }
+    "8000": { "label": "Vite dev server", "onAutoForward": "notify" },
+    "6006": { "label": "Storybook", "onAutoForward": "notify" }
   },
+
+  // Who git says made each commit. Git reads these four environment
+  // variables before any config file, so a freshly built container commits
+  // under the right name on any machine. The email is GitHub's private
+  // no-reply address, so no real address lands in a repo's history.
+  "containerEnv": {
+    "GIT_AUTHOR_NAME": "Doug Scamahorn",
+    "GIT_AUTHOR_EMAIL": "6138631+dscamahorn@users.noreply.github.com",
+    "GIT_COMMITTER_NAME": "Doug Scamahorn",
+    "GIT_COMMITTER_EMAIL": "6138631+dscamahorn@users.noreply.github.com",
+
+    // Commit signing. Git also reads config from numbered environment
+    // variables (GIT_CONFIG_KEY_n and GIT_CONFIG_VALUE_n, n below
+    // GIT_CONFIG_COUNT), so a fresh container signs without a config file.
+    // The signature comes from the GitHub SSH key in 1Password, through the
+    // agent VS Code forwards; the public half is written here because a
+    // public key is public. allowed_signers in the shared mount is what
+    // "git log --show-signature" checks against. The Air's container has no
+    // agent, so its dev script sets GIT_SIGN_COMMITS=false and commits there
+    // go unsigned (GitHub marks them Unverified under vigilant mode).
+    "GIT_CONFIG_COUNT": "4",
+    "GIT_CONFIG_KEY_0": "gpg.format",
+    "GIT_CONFIG_VALUE_0": "ssh",
+    "GIT_CONFIG_KEY_1": "user.signingkey",
+    "GIT_CONFIG_VALUE_1": "key::ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAbblvpGAe19qkb8cGjTIxSsQzO4NHAS8ps5B/0Op91M GitHub SSH Key - Pro",
+    "GIT_CONFIG_KEY_2": "gpg.ssh.allowedSignersFile",
+    "GIT_CONFIG_VALUE_2": "/home/node/.claude/shared/allowed_signers",
+    "GIT_CONFIG_KEY_3": "commit.gpgsign",
+    "GIT_CONFIG_VALUE_3": "${localEnv:GIT_SIGN_COMMITS:true}"
+  },
+
+  // Claude Code reads the global rules from ~/.claude. Only the pieces the
+  // container needs are shared in from the Mac, each as its own mount:
+  //   shared/            the global rules (CLAUDE.md) and app preferences
+  //                      (settings.json). A folder, not two files: a file
+  //                      mount breaks when git replaces the file on the Mac.
+  //                      The Dockerfile makes ~/.claude/CLAUDE.md import it
+  //                      and ~/.claude/settings.json a symlink into it.
+  //   .credentials.json  the Claude login, so it survives container rebuilds
+  //   skills/            custom skills, with the templates they use
+  //   memory/            Claude's own notes (settings.json points every
+  //                      project at this one folder, so they survive a
+  //                      rebuild and are shared across projects)
+  //   projects/-workspaces-ai-design-system-demo-app
+  //                      this project's own session transcripts. Claude Code
+  //                      names the folder after the working directory with
+  //                      every "/" turned into "-", so the container's
+  //                      /workspaces/ai-design-system-demo-app lands here.
+  //                      Mounting it from the Mac means the transcripts
+  //                      survive a rebuild and the setup review's
+  //                      corrections miner can read them. The container sees
+  //                      only what it wrote itself, so nothing new is
+  //                      exposed to it.
+  // shared/ and skills/ are mounted read-only: the container only reads
+  // them, so nothing in it (a package's install script, a hijacked session)
+  // can rewrite the rules, the settings, or a skill. Settings changes are
+  // made on the Mac, which is the rule anyway. memory/ and the transcript
+  // folder stay writable because Claude Code writes to them.
+  // The rest of ~/.claude (other projects' transcripts, caches) stays on
+  // the Mac where nothing in the container can read it.
+  "mounts": [
+    "source=${localEnv:HOME}/.claude/shared,target=/home/node/.claude/shared,type=bind,readonly",
+    "source=${localEnv:HOME}/.claude/.credentials.json,target=/home/node/.claude/.credentials.json,type=bind",
+    "source=${localEnv:HOME}/.claude/skills,target=/home/node/.claude/skills,type=bind,readonly",
+    "source=${localEnv:HOME}/.claude/memory,target=/home/node/.claude/memory,type=bind",
+    "source=${localEnv:HOME}/.claude/projects/-workspaces-ai-design-system-demo-app,target=/home/node/.claude/projects/-workspaces-ai-design-system-demo-app,type=bind"
+  ],
+
+  // Runs on the Mac just before the container is created. A bind mount of a
+  // file that does not exist yet makes Docker create a folder in its place,
+  // so this makes sure the login file exists first ("{}" means not logged in),
+  // and a missing folder would be created owned by root, so the folders are
+  // made here too.
+  "initializeCommand": "mkdir -p ~/.claude/shared ~/.claude/skills ~/.claude/memory ~/.claude/projects/-workspaces-ai-design-system-demo-app && ([ -f ~/.claude/.credentials.json ] || echo '{}' > ~/.claude/.credentials.json)",
+
+  // First-time setup when the container is built. Run `claude login`
+  // afterward if the shared login file is empty.
+  // post-create.sh installs the npm dependencies. The second command
+  // installs the timelapse skill as a uv tool, so `timelapse capture` works from any terminal in the container.
+  // It runs here and not in the Dockerfile because the skills mount does
+  // not exist yet at image build time. --editable means the tool's venv (in
+  // the container's home folder) points back at the read-only skills mount
+  // for the code, so a skill edit on the Mac applies at once and nothing is
+  // written into the mount. The Python comes from /opt/uv/python, where the
+  // Dockerfile already put one for the scanners, so no download happens.
+  "postCreateCommand": "bash .devcontainer/post-create.sh && UV_PYTHON_INSTALL_DIR=/opt/uv/python uv tool install --editable ~/.claude/skills/timelapse",
+
+  // Run as the non-root user that the image ships with.
+  "remoteUser": "node",
 
   "customizations": {
     "vscode": {
       // Extensions installed on the Mac do not carry into the container;
-      // only the ones listed here get installed inside it.
+      // only the ones listed here get installed inside it. This project has
+      // no Tailwind, so the template's Tailwind extension is left out.
       "extensions": [
         "anthropic.claude-code",
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
         "GitHub.vscode-pull-request-github"
       ],
-      // Format every file with Prettier when it is saved.
       "settings": {
+        // Prettier formats every file on save (its settings are in
+        // .prettierrc) and ESLint marks rule breaks inline (see
+        // eslint.config.js). The project is TypeScript and React, so ESLint
+        // checks those file types.
         "editor.formatOnSave": true,
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "eslint.validate": [
+          "javascript",
+          "javascriptreact",
+          "typescript",
+          "typescriptreact"
+        ]
       }
     }
-  },
-
-  // Run as the non-root "node" user that the image ships with.
-  "remoteUser": "node"
+  }
 }
