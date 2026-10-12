@@ -103,3 +103,17 @@ When implementing a Figma design in this repo (via the `figma` or `figma-console
 - Dev container: Microsoft's `javascript-node:22-bookworm` image plus the GitHub CLI and Claude Code features (`.devcontainer/devcontainer.json`), Docker runtime via Colima. Only the needed pieces of the host's `~/.claude` are mounted into `/home/node/.claude` (the rules and skills read-only, plus the login, memory, and this project's transcripts) so the global CLAUDE.md and the Claude login are available inside. `.devcontainer/post-create.sh` runs `npm install`. The container does not load `.env` into the shell. Everything (git, `gh`, `claude`, builds) runs inside the container.
 - `.mcp.json` (tracked in git; it holds no secrets) configures the `figma` (remote HTTP), `figma-console` (local, via `npx figma-console-mcp`), and `design-systems-mcp` (remote HTTP) MCP servers. `figma-console` is started through `scripts/start-figma-console-mcp.sh`, which reads `FIGMA_ACCESS_TOKEN` from the gitignored `.env` and hands it to that server only.
 - Figma sync scripts (`scripts/tokens`, `scripts/icons`, `scripts/dev-resources`) read Figma credentials from `.env` via `node --env-file`.
+
+## Project rules
+
+- Dependency patch window: a known hole rated high or critical is fixed within
+  7 days; the rest wait for the fortnightly review. (ASVS V15.1.1 asks that
+  this be written down; the push-time audit checks it.)
+
+## Compact Instructions
+
+Claude Code reads this section when it summarizes a long conversation. Keep,
+verbatim: the milestone name and its branch, the Gherkin scenario being
+validated, every decision Doug made and every correction he gave, and the
+next step. Reference files and commits by path and hash instead of quoting
+their contents.
