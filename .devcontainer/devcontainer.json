@@ -25,14 +25,13 @@
 
   // Runs on the Mac just before the container is created, so the login file
   // exists before it is mounted ("{}" means not logged in).
-  "initializeCommand": "mkdir -p ~/.claude/skills ~/.claude/web-baseline ~/.claude/memory && ([ -f ~/.claude/.credentials.json ] || echo '{}' > ~/.claude/.credentials.json)",
+  "initializeCommand": "mkdir -p ~/.claude/shared ~/.claude/skills ~/.claude/web-baseline ~/.claude/memory && ([ -f ~/.claude/.credentials.json ] || echo '{}' > ~/.claude/.credentials.json)",
 
   // Claude Code reads the global rules from ~/.claude. Only the pieces the
   // container needs are shared in, each as its own mount; transcripts and
   // caches stay on the Mac. The Node image's user is "node".
   "mounts": [
-    "source=${localEnv:HOME}/.claude/CLAUDE.md,target=/home/node/.claude/CLAUDE.md,type=bind,readonly",
-    "source=${localEnv:HOME}/.claude/settings.json,target=/home/node/.claude/settings.json,type=bind",
+    "source=${localEnv:HOME}/.claude/shared,target=/home/node/.claude/shared,type=bind",
     "source=${localEnv:HOME}/.claude/.credentials.json,target=/home/node/.claude/.credentials.json,type=bind",
     "source=${localEnv:HOME}/.claude/skills,target=/home/node/.claude/skills,type=bind",
     "source=${localEnv:HOME}/.claude/web-baseline,target=/home/node/.claude/web-baseline,type=bind,readonly",
@@ -43,7 +42,7 @@
   // Code must be able to write its session files in ~/.claude. Then the
   // script installs npm dependencies and the Claude Code CLI and wires up
   // .env loading for the shell.
-  "postCreateCommand": "sudo chown node:node /home/node/.claude && bash .devcontainer/post-create.sh",
+  "postCreateCommand": "sudo chown node:node /home/node/.claude && printf '@~/.claude/shared/CLAUDE.md\\n' > /home/node/.claude/CLAUDE.md && ln -sf shared/settings.json /home/node/.claude/settings.json && bash .devcontainer/post-create.sh",
 
   // 8000 is the Vite dev server, 6006 is Storybook, and 9223-9232 is the
   // port range the Figma Desktop Bridge plugin uses to reach the local
