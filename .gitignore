@@ -8,3 +8,10 @@ storybook-static/
 *.log
 .figma-console-mcp-plugin/
 .claude/
+
+# Baseline entries added at the October 11, 2026 audit (see ~/.claude/templates/gitignore).
+.venv/
+.env.*
+!.env.example
+deploy.env
+cookies*

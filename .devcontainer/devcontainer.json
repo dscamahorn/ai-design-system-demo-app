@@ -8,7 +8,8 @@
 
   // Microsoft's Dev Container image for JavaScript/TypeScript work. It ships
   // Node 22, git, zsh, and a working global npm for the "node" user.
-  "image": "mcr.microsoft.com/devcontainers/javascript-node:22-bookworm",
+  // The image is described in Dockerfile next to this file.
+  "build": { "dockerfile": "Dockerfile" },
 
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {}
@@ -42,7 +43,7 @@
   // Code must be able to write its session files in ~/.claude. Then the
   // script installs npm dependencies and the Claude Code CLI and wires up
   // .env loading for the shell.
-  "postCreateCommand": "sudo chown node:node /home/node/.claude && printf '@~/.claude/shared/CLAUDE.md\\n' > /home/node/.claude/CLAUDE.md && ln -sf shared/settings.json /home/node/.claude/settings.json && bash .devcontainer/post-create.sh",
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
 
   // 8000 is the Vite dev server, 6006 is Storybook, and 9223-9232 is the
   // port range the Figma Desktop Bridge plugin uses to reach the local
