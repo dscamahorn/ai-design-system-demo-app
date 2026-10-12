@@ -41,4 +41,9 @@ fi
 
 # Replace this script with the server ("exec"), so Claude Code talks to the
 # server directly and stopping the server needs no extra step.
-exec npx -y figma-console-mcp@latest
+# The version is pinned on purpose: "@latest" would fetch whatever is newest
+# each time Figma is used, and the three-day release cooldown in .npmrc does
+# not apply to an npx fetch, so a poisoned release could run with the Figma
+# token. Bump the version at a two-week review (the tool-figma skill card
+# records it). 1.40.9 was published October 2, 2026.
+exec npx -y figma-console-mcp@1.40.9
