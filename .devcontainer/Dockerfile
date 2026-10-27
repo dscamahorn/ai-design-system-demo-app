@@ -22,10 +22,10 @@ FROM mcr.microsoft.com/devcontainers/javascript-node:22-bookworm
 # (installed by postCreateCommand) needs 3.12 or newer and expects to find
 # one in /opt/uv/python; without this line it tries to download one into
 # that root-owned folder and fails with "Permission denied".
-COPY --from=ghcr.io/astral-sh/uv:0.13.0 /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv:0.13.5 /uv /uvx /bin/
 RUN UV_TOOL_DIR=/opt/uv/tools UV_TOOL_BIN_DIR=/usr/local/bin \
     UV_PYTHON_INSTALL_DIR=/opt/uv/python \
-    uv tool install semgrep==1.180.0 \
+    uv tool install semgrep==1.181.1 \
     && UV_TOOL_DIR=/opt/uv/tools UV_TOOL_BIN_DIR=/usr/local/bin \
     UV_PYTHON_INSTALL_DIR=/opt/uv/python \
     uv tool install pip-audit==2.10.1 \
@@ -39,7 +39,7 @@ RUN UV_TOOL_DIR=/opt/uv/tools UV_TOOL_BIN_DIR=/usr/local/bin \
 # in the project's .npmrc is honored. Those three closed the install-time
 # path every 2026 npm supply-chain wave used. Bump the version at a two-week
 # review.
-RUN npm install -g npm@12.2.0
+RUN npm install -g npm@12.2.1
 
 # System packages. ffmpeg is here for every project because the timelapse
 # skill (installed into the container by postCreateCommand, see
@@ -62,7 +62,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # block stays off; uncomment it when it does, and bump the version at a
 # two-week review.
 # ENV PLAYWRIGHT_BROWSERS_PATH=/opt/playwright
-# RUN npx --yes playwright@1.64.0 install --with-deps chromium \
+# RUN npx --yes playwright@1.64.1 install --with-deps chromium \
 #     && chmod -R a+rX /opt/playwright
 
 # Docker creates the folders a bind mount needs as root. Claude Code must be
