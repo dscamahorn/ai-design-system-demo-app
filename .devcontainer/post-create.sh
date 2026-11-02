@@ -9,6 +9,11 @@
 # pass .env to node with --env-file.
 set -e
 
+# node_modules is a Docker volume (see devcontainer.json), and a new volume
+# belongs to root, so npm could not write to it until it is handed over.
+echo "==> Giving node_modules to the node user"
+sudo chown node:node node_modules
+
 echo "==> Installing npm dependencies"
 npm install
 

@@ -96,7 +96,14 @@
     "source=${localEnv:HOME}/.claude/.credentials.json,target=/home/node/.claude/.credentials.json,type=bind",
     "source=${localEnv:HOME}/.claude/skills,target=/home/node/.claude/skills,type=bind,readonly",
     "source=${localEnv:HOME}/.claude/memory,target=/home/node/.claude/memory,type=bind",
-    "source=${localEnv:HOME}/.claude/container-projects/ai-design-system-demo-app,target=/home/node/.claude/projects,type=bind"
+    "source=${localEnv:HOME}/.claude/container-projects/ai-design-system-demo-app,target=/home/node/.claude/projects,type=bind",
+    // node_modules lives in a Docker volume (storage inside Colima), not in
+    // the repo folder, because the repo is on OneDrive: OneDrive was
+    // uploading some 20,000 Linux package files and can turn files into
+    // online-only placeholders the container cannot read. The volume
+    // survives rebuilds. post-create.sh hands it to the node user, since a
+    // new volume belongs to root.
+    "source=ai-design-system-demo-app-node-modules,target=/workspaces/ai-design-system-demo-app/node_modules,type=volume"
   ],
 
   // Runs on the Mac just before the container is created. A bind mount of a
