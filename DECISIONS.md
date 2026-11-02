@@ -23,6 +23,20 @@ One decision per entry, numbered in the order they were made. `Instead` names th
 - Instead: An npm `overrides` entry forcing zod 4 under code-connect, passed over because code-connect is written against zod 3's API and the override would sit hidden under every later upgrade.
 - Supersedes: none
 
+### D002: Claude Desktop sessions run inside the dev container, reached over SSH
+- Date: 2026-11-02
+- Branch: desktop-ssh-sessions
+- Area: stack
+- Because: The setup rolled out from curiouscarbons-site (its DECISIONS.md, D001 to D008): sshd in the image started per connection by `docker exec`, a fixed `ai-design-system-demo-app-dev` container name, the whole transcript folder mounted from `~/.claude/container-projects/ai-design-system-demo-app`, and unsigned commits from Desktop sessions. Applied to every container repo at once at Doug's request instead of waiting for the November 10 review.
+- Instead: waiting for the November 10, 2026 review to pick repos one by one.
+- Supersedes: none
+
 ## Milestone close
 
 One entry per merged branch, written before the merge from Doug's answers. "none" is a valid answer for every line; an invented answer is not.
+
+### desktop-ssh-sessions
+- Merged: 2026-11-02
+- Outcome: Measured on 2026-11-02: the image built and `sshd -t` passed on the new configuration (the rollout's build test).
+- Lesson: none
+- Client said: none
