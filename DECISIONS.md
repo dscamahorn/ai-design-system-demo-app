@@ -39,6 +39,14 @@ One decision per entry, numbered in the order they were made. `Instead` names th
 - Instead: keeping the Dependabot read with a sign-in per push, or a lasting GitHub token in the container.
 - Supersedes: none
 
+### D004: zod's memory hole is accepted until November 25, 2026, in osv-scanner.toml
+- Date: 2026-11-03
+- Branch: fix-dependency-scan
+- Area: stack
+- Because: osv-scanner found GHSA-mrhx-c7xc-m3w5 (CVSS 8.2) in zod 3.25.58, fixed only in zod 4.6.6. zod comes in only through @figma/code-connect, a local development tool that reads this repo's own files, and even its newest release (2.1.0) requires zod 3, so no upgrade fixes it. The exception has an end date, so the finding returns by itself at the November 24 review.
+- Instead: forcing zod 4 under Code Connect with an npm override (likely breaks it), or leaving every push blocked until Figma updates.
+- Supersedes: none
+
 ## Milestone close
 
 One entry per merged branch, written before the merge from Doug's answers. "none" is a valid answer for every line; an invented answer is not.
@@ -52,5 +60,11 @@ One entry per merged branch, written before the merge from Doug's answers. "none
 ### add-osv-scanner
 - Merged: 2026-11-03
 - Outcome: Measured on 2026-11-03: the image built with the checksum check passing and `osv-scanner --version` printed 2.7.0.
+- Lesson: none
+- Client said: none
+
+### fix-dependency-scan
+- Merged: 2026-11-03
+- Outcome: Measured on 2026-11-03: osv-scanner went from one high finding (zod) and six medium to six medium, all in development packages; the zod finding is filtered with its reason shown.
 - Lesson: none
 - Client said: none
