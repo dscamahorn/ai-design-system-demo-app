@@ -32,6 +32,24 @@ RUN UV_TOOL_DIR=/opt/uv/tools UV_TOOL_BIN_DIR=/usr/local/bin \
     && UV_PYTHON_INSTALL_DIR=/opt/uv/python uv python install 3.14 \
     && chmod -R a+rX /opt/uv
 
+# The third scanner: osv-scanner (Google) checks every lock file in the repo
+# (uv.lock, package-lock.json, and others) against the same advisories
+# Dependabot uses, on the branch itself and with no GitHub sign-in. It reads
+# lock entries for other platforms too, which pip-audit skips (the
+# stack-security skill, step 5). It is one program file from Google's GitHub
+# release; the checksum check stops the build if the download is not the file
+# Google published. Pinned like the others: bump the version and both
+# checksums (from the release's osv-scanner_SHA256SUMS) at a two-week review.
+ARG OSV_SCANNER_VERSION=2.7.0
+ARG OSV_SCANNER_SHA256_AMD64=160c6253e2922e9e0a6a9771c5c4c40a4b3c6090b34a3cdd5e80c96cc2e4218b
+ARG OSV_SCANNER_SHA256_ARM64=4061ef4c021ed3c47f203b818f337e351336cc5cd67c0274fc36bd1dfc728dd7
+RUN architecture="$(dpkg --print-architecture)" \
+    && if [ "$architecture" = "arm64" ]; then expected_sha256="$OSV_SCANNER_SHA256_ARM64"; else expected_sha256="$OSV_SCANNER_SHA256_AMD64"; fi \
+    && curl -fsSL -o /usr/local/bin/osv-scanner \
+    "https://github.com/google/osv-scanner/releases/download/v${OSV_SCANNER_VERSION}/osv-scanner_linux_${architecture}" \
+    && echo "${expected_sha256}  /usr/local/bin/osv-scanner" | sha256sum -c - \
+    && chmod 755 /usr/local/bin/osv-scanner
+
 # npm 12, pinned. The base image ships npm 10. From npm 12, a package's
 # install scripts do not run unless the project lists the package in an
 # "allowScripts" allowlist in package.json (built with "npm approve-scripts"),
