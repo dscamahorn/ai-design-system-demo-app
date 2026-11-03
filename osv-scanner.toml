@@ -1,0 +1,16 @@
+# osv-scanner's settings for this repo (the push-time dependency scan in the
+# stack-security skill). Each [[IgnoredVulns]] entry is a known hole that
+# cannot be fixed yet. It names the hole, says why it is accepted, and has an
+# end date: after ignoreUntil the finding comes back by itself and blocks the
+# push again, so the exception is rechecked instead of forgotten.
+
+[[IgnoredVulns]]
+# zod 3.25.58: a very large input can use up all memory while it is checked
+# (fixed only in zod 4.6.6). zod comes in only through @figma/code-connect,
+# a development tool that reads this repo's own Figma and component files on
+# this machine, never outside input. Even Code Connect's newest release
+# (2.1.0, October 26, 2026) still requires zod 3.25.76, so no upgrade fixes
+# it. Recheck at the November 24, 2026 review.
+id = "GHSA-mrhx-c7xc-m3w5"
+ignoreUntil = 2026-11-25T00:00:00Z
+reason = "zod 3 only through @figma/code-connect, a local dev tool with no outside input; no Code Connect release uses zod 4 yet (checked November 3, 2026)"
