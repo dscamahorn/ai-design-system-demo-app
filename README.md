@@ -62,7 +62,7 @@ Needed for both the Figma sync scripts below and the `figma-console` MCP server.
 2. Scroll to **Personal access tokens** → **Generate new token**.
 3. Give it a name (e.g. `ai-design-system-demo-app`) and grant scopes for **Code Connect**, **Variables** (read), and **Dev resources** (read/write). These are what `scripts/tokens`, `scripts/icons`, and `scripts/dev-resources` need.
 4. Copy the token immediately. Figma only shows it once.
-5. Copy `.env-rename` to `.env` and paste it in as `FIGMA_ACCESS_TOKEN`, along with the SDS file key (`FIGMA_FILE_KEY`, the `r2laq9NyigGR0KZpc05sQm` from the `design-system-demo-sds` URL above).
+5. Copy `.env.example` to `.env` and paste it in as `FIGMA_ACCESS_TOKEN`, along with the SDS file key (`FIGMA_FILE_KEY`, the `r2laq9NyigGR0KZpc05sQm` from the `design-system-demo-sds` URL above).
    - `.env` is not loaded into the shell. The `figma-console` MCP server is started through `scripts/start-figma-console-mcp.sh`, which reads the token from `.env` and passes it to that server only; the sync scripts read `.env` themselves through `node --env-file`.
 
 ### Optional: Figma sync scripts
