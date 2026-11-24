@@ -19,7 +19,7 @@ ENV_FILE="$PROJECT_DIR/.env"
 # (>&2) because an MCP server's stdout is reserved for talking to Claude Code.
 if [ ! -f "$ENV_FILE" ]; then
   echo "start-figma-console-mcp: no .env file at $ENV_FILE." >&2
-  echo "Copy .env-rename to .env and add FIGMA_ACCESS_TOKEN (see the README)." >&2
+  echo "Copy .env.example to .env and add FIGMA_ACCESS_TOKEN (see the README)." >&2
   exit 1
 fi
 
